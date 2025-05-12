@@ -24,10 +24,3 @@ dist-ssr
 *.sw?
 
 .env
-
-# Arquivos gerados automaticamente
-src/integrations/supabase/client.ts
-
-# Possíveis arquivos sensíveis do Supabase
-supabase/.env
-supabase/secrets.toml
