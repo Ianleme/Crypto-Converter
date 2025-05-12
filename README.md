@@ -63,3 +63,33 @@ You can publish your project by running `npm run build` and deploying the `dist`
 ### Can I connect a custom domain to my project?
 
 Yes, most hosting providers allow you to connect a custom domain. Please refer to your hosting provider's documentation for instructions.
+
+## API e Configuração
+
+### Configuração da API do CoinGecko
+
+Este projeto utiliza a API do CoinGecko para buscar dados de criptomoedas.
+
+- Em ambiente de desenvolvimento, os requests são feitos através de um servidor proxy local (server/index.js) para combinar dados em USD e BRL.
+- Em ambiente de produção, os requests são feitos diretamente para a API do CoinGecko.
+
+### Variáveis de Ambiente
+
+Para configurar o projeto, crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```
+# API do CoinGecko (necessário para produção)
+VITE_COINGECKO_API_KEY=sua_chave_api_aqui
+
+# Variáveis do servidor (apenas para desenvolvimento)
+COINGECKO_API_URL=https://api.coingecko.com/api/v3
+COINGECKO_API_KEY=sua_chave_api_aqui
+CACHE_TTL=600
+PORT=3001
+```
+
+Observações:
+
+- Para desenvolvimento, execute `npm run dev:all` para iniciar tanto o frontend quanto o servidor proxy.
+- Para produção, apenas a variável `VITE_COINGECKO_API_KEY` é necessária.
+- Se você não tiver uma chave API do CoinGecko, as requisições ainda funcionarão, mas estarão sujeitas a limites de taxa mais restritos.
