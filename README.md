@@ -63,3 +63,14 @@ You can publish your project by running `npm run build` and deploying the `dist`
 ### Can I connect a custom domain to my project?
 
 Yes, most hosting providers allow you to connect a custom domain. Please refer to your hosting provider's documentation for instructions.
+
+## Configuração de variáveis de ambiente
+
+Crie um arquivo `.env.local` na raiz do projeto com o seguinte conteúdo:
+
+```
+VITE_SUPABASE_URL=https://SEU_SUPABASE_URL
+VITE_SUPABASE_PUBLISHABLE_KEY=SUA_SUPABASE_PUBLISHABLE_KEY
+```
+
+**Atenção:** Não versionar o arquivo `.env.local` nem expor suas chaves em repositórios públicos.

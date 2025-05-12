@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run server\""
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "VITE_SUPABASE_URL": "https://SEU_SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY": "SUA_SUPABASE_PUBLISHABLE_KEY"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -95,5 +97,9 @@
   },
   "volta": {
     "node": "20.10.0"
+  },
+  "env_example": {
+    "VITE_SUPABASE_URL": "https://SEU_SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY": "SUA_SUPABASE_PUBLISHABLE_KEY"
   }
 }
