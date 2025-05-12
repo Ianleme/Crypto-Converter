@@ -1,7 +1,10 @@
 import { Crypto } from "@/types/crypto";
 
-// URL do servidor proxy local em vez da API do CoinGecko
-const PROXY_API_URL = "http://localhost:3001/api";
+// URL do servidor proxy em vez da API do CoinGecko
+// Detecta automaticamente se estamos em produção ou desenvolvimento
+const PROXY_API_URL = import.meta.env.PROD
+  ? "/api" // Em produção, usa caminho relativo (mesma origem)
+  : "http://localhost:3001/api"; // Em desenvolvimento, usa localhost
 
 export interface CoinGeckoResponse {
   id: string;

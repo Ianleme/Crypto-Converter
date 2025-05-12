@@ -146,11 +146,13 @@ const Favorites = () => {
                           })}
                         </p>
                       </div>
-                      <FavoriteButton
-                        cryptoId={crypto.id}
-                        size="sm"
-                        className="ml-2"
-                      />
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <FavoriteButton
+                          cryptoId={crypto.id}
+                          size="sm"
+                          className="ml-2"
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}

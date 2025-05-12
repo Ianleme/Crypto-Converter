@@ -35,11 +35,24 @@ export function useCryptoData() {
 
   const fetchFavorites = async () => {
     try {
+      if (!user) {
+        console.log("Não há usuário logado para buscar favoritos");
+        return [];
+      }
+
+      console.log("Buscando favoritos para o usuário:", user.id);
+
       const { data, error } = await supabase
         .from("favorites")
-        .select("crypto_id");
+        .select("crypto_id")
+        .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao buscar favoritos:", error);
+        throw error;
+      }
+
+      console.log("Favoritos encontrados:", data);
       return data.map((item) => item.crypto_id);
     } catch (error) {
       console.error("Error fetching favorites:", error);
@@ -47,16 +60,32 @@ export function useCryptoData() {
     }
   };
 
-  const { data: fetchedFavorites = [], isLoading: isFavoritesLoading } =
-    useQuery({
-      queryKey: ["favorites"],
-      queryFn: fetchFavorites,
-      enabled: !!user,
-      staleTime: 300000, // Favoritos são válidos por 5 minutos sem refetch
-    });
+  const {
+    data: fetchedFavorites = [],
+    isLoading: isFavoritesLoading,
+    refetch: refetchFavorites,
+  } = useQuery({
+    queryKey: ["favorites", user?.id], // Adiciona o user.id como parte da chave para recarregar quando mudar
+    queryFn: fetchFavorites,
+    enabled: !!user,
+    staleTime: 0, // Sempre recarregar quando solicitado
+    refetchOnWindowFocus: true, // Recarregar quando a janela ganhar foco
+  });
 
   useEffect(() => {
-    if (fetchedFavorites.length > 0) {
+    if (user) {
+      // Quando o usuário logar, recarregar os favoritos
+      console.log("Usuário logado, recarregando favoritos");
+    } else {
+      // Quando o usuário deslogar, limpar os favoritos
+      console.log("Usuário deslogado, limpando favoritos");
+      setFavorites([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (fetchedFavorites && fetchedFavorites.length >= 0) {
+      console.log("Atualizando favoritos do estado:", fetchedFavorites);
       setFavorites(fetchedFavorites);
     }
   }, [fetchedFavorites]);
@@ -68,14 +97,24 @@ export function useCryptoData() {
         return;
       }
 
+      console.log("Adicionando favorito:", cryptoId, "para usuário:", user.id);
+
       const { error } = await supabase.from("favorites").insert({
         crypto_id: cryptoId,
         user_id: user.id,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao inserir favorito:", error);
+        throw error;
+      }
 
+      // Atualiza imediatamente o estado local
       setFavorites((prev) => [...prev, cryptoId]);
+
+      // Recarrega os favoritos do servidor
+      refetchFavorites();
+
       toast.success("Adicionado aos favoritos");
     } catch (error: any) {
       console.error("Error adding favorite:", error);
@@ -85,14 +124,30 @@ export function useCryptoData() {
 
   const removeFavorite = async (cryptoId: string) => {
     try {
+      if (!user) {
+        toast.error("Você precisa estar logado para remover dos favoritos");
+        return;
+      }
+
+      console.log("Removendo favorito:", cryptoId, "para usuário:", user.id);
+
       const { error } = await supabase
         .from("favorites")
         .delete()
-        .eq("crypto_id", cryptoId);
+        .eq("crypto_id", cryptoId)
+        .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao remover favorito:", error);
+        throw error;
+      }
 
+      // Atualiza imediatamente o estado local
       setFavorites((prev) => prev.filter((id) => id !== cryptoId));
+
+      // Recarrega os favoritos do servidor
+      refetchFavorites();
+
       toast.success("Removido dos favoritos");
     } catch (error: any) {
       console.error("Error removing favorite:", error);
@@ -153,5 +208,6 @@ export function useCryptoData() {
     searchResults,
     isSearchLoading,
     refetchCryptos,
+    refetchFavorites,
   };
 }
